@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "How My YouTube AI Assistant Works",
+    "output": "youtube-ai-assistant-architecture.html",
+    "quality_profile": "showcase",
+    "visual_preset": "signal-flow",
+    "locale": "en",
+    "viewBox": [1600, 900]
+  },
+  "components": [
+    { "id": "user", "type": "external", "label": "User", "pos": [42, 405], "size": [126, 72] },
+    { "id": "youtube", "type": "external", "label": "YouTube Video Page", "pos": [226, 405], "size": [180, 72] },
+    { "id": "extensionCore", "type": "frontend", "label": "Chrome Extension Core", "pos": [478, 405], "size": [218, 72] },
+    { "id": "api", "type": "backend", "label": "FastAPI Backend", "pos": [774, 405], "size": [206, 72] },
+    { "id": "transcript", "type": "backend", "label": "Transcript Handling", "pos": [840, 170], "size": [210, 72], "tag": "youtube-transcript-api" },
+    { "id": "chunker", "type": "backend", "label": "Transcript Chunker", "pos": [1090, 170], "size": [180, 72] },
+    { "id": "embeddings", "type": "cloud", "label": "Hugging Face Embeddings", "pos": [1320, 170], "size": [180, 72] },
+    { "id": "pinecone", "type": "database", "label": "Pinecone Vector Index", "pos": [1320, 405], "size": [180, 72] },
+    { "id": "rag", "type": "backend", "label": "RAG Pipeline", "pos": [1126, 640], "size": [222, 76] },
+    { "id": "llm", "type": "cloud", "label": "Hugging Face LLM", "pos": [832, 640], "size": [220, 76] },
+    { "id": "chatUi", "type": "frontend", "label": "Extension Chat UI", "pos": [528, 640], "size": [220, 76] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "User Browser + Chrome Extension", "wraps": ["youtube", "extensionCore", "chatUi"], "pad": 32 },
+    { "kind": "region", "label": "Python RAG Service", "wraps": ["api", "transcript", "chunker", "rag"], "pad": 32 },
+    { "kind": "region", "label": "AI Services", "wraps": ["embeddings", "pinecone", "llm"], "pad": 32 }
+  ],
+  "connections": [
+    { "id": "watch", "from": "user", "to": "youtube", "label": "Watches video", "variant": "emphasis", "labelAt": [197, 510] },
+    { "id": "read-video", "from": "youtube", "to": "extensionCore", "label": "Video URL / ID + captions", "variant": "emphasis", "labelAt": [442, 510] },
+    { "id": "load-or-chat", "from": "extensionCore", "to": "api", "label": "POST: captions or user query", "variant": "emphasis", "labelAt": [735, 510] },
+    { "id": "prepare-transcript", "from": "api", "to": "transcript", "label": "Transcript", "variant": "emphasis", "fromSide": "top", "toSide": "bottom", "route": "orthogonal-v", "labelAt": [900, 320] },
+    { "id": "chunk", "from": "transcript", "to": "chunker", "label": "Caption segments", "variant": "emphasis", "labelAt": [1070, 270] },
+    { "id": "embed-documents", "from": "chunker", "to": "embeddings", "label": "Chunk text", "variant": "emphasis", "labelAt": [1295, 270] },
+    { "id": "index", "from": "embeddings", "to": "pinecone", "label": "Embeddings + timestamps", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "orthogonal-v", "labelAt": [1410, 320] },
+    { "id": "retrieve", "from": "pinecone", "to": "rag", "label": "Video-filtered context", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "orthogonal-v", "via": [[1410, 570], [1237, 570]], "labelAt": [1310, 555] },
+    { "id": "prompt", "from": "rag", "to": "llm", "label": "Delimited prompt + context", "variant": "emphasis", "labelAt": [1089, 608] },
+    { "id": "answer", "from": "llm", "to": "chatUi", "label": "AI response via /api/chat", "variant": "emphasis", "labelAt": [790, 608] },
+    { "id": "display", "from": "chatUi", "to": "user", "label": "Answer + citations", "variant": "emphasis", "fromSide": "left", "toSide": "bottom", "route": "orthogonal-h", "via": [[390, 678], [390, 760], [105, 760]], "labelAt": [248, 746] }
+  ],
+  "cards": [
+    { "dot": "violet", "title": "Extension behavior", "items": ["The content script reads the current video URL and title", "The page bridge reads YouTube caption tracks and returns timestamped segments", "The background worker fetches the configured FastAPI backend"] },
+    { "dot": "cyan", "title": "Grounded answer path", "items": ["Browser captions are preferred; the cached server provider is the fallback", "all-MiniLM-L6-v2 stores video-scoped Pinecone vectors", "RAG injects retrieved transcript evidence into Llama 3.1 8B Instruct", "The UI renders structured source timestamps as player-seek controls"] },
+    { "dot": "amber", "title": "Safe handling", "items": ["Safe API errors cover unavailable captions, credentials, and provider failures", "Prompt-injection checks run before retrieval; no evidence returns a grounded fallback"] }
+  ]
+}

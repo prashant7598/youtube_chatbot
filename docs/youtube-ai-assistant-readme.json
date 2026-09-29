@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "How My YouTube AI Assistant Works",
+    "output": "youtube-ai-assistant-readme.html",
+    "quality_profile": "showcase",
+    "visual_preset": "signal-flow",
+    "locale": "en",
+    "viewBox": [1280, 720]
+  },
+  "components": [
+    { "id": "youtube", "type": "external", "label": "User + YouTube" , "pos": [48, 286], "size": [150, 68] },
+    { "id": "extension", "type": "frontend", "label": "Chrome Extension", "pos": [254, 286], "size": [164, 68] },
+    { "id": "api", "type": "backend", "label": "FastAPI + Transcript", "pos": [480, 286], "size": [184, 68] },
+    { "id": "embeddings", "type": "cloud", "label": "HF Embeddings", "pos": [726, 160], "size": [160, 68] },
+    { "id": "pinecone", "type": "database", "label": "Pinecone", "pos": [950, 160], "size": [148, 68] },
+    { "id": "rag", "type": "backend", "label": "RAG + HF LLM", "pos": [890, 456], "size": [170, 68] },
+    { "id": "answer", "type": "frontend", "label": "Chat Answer + Citations", "pos": [650, 456], "size": [184, 68] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Browser", "wraps": ["youtube", "extension", "answer"], "pad": 28 },
+    { "kind": "region", "label": "Backend", "wraps": ["api", "rag"], "pad": 28 },
+    { "kind": "region", "label": "AI + Vector Services", "wraps": ["embeddings", "pinecone"], "pad": 28 }
+  ],
+  "connections": [
+    { "id": "current-video", "from": "youtube", "to": "extension", "label": "Video URL / ID", "variant": "emphasis", "labelAt": [226, 384] },
+    { "id": "load", "from": "extension", "to": "api", "label": "Captions + user query", "variant": "emphasis", "labelAt": [449, 384] },
+    { "id": "embed", "from": "api", "to": "embeddings", "label": "Timestamped chunks", "variant": "emphasis", "fromSide": "top", "toSide": "left", "route": "orthogonal-h", "via": [[572, 250], [690, 250], [690, 194]], "labelAt": [720, 250] },
+    { "id": "index", "from": "embeddings", "to": "pinecone", "label": "Vectors", "variant": "emphasis", "labelAt": [918, 250] },
+    { "id": "retrieve", "from": "pinecone", "to": "rag", "label": "Relevant context", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "orthogonal-v", "labelAt": [1000, 360] },
+    { "id": "answer", "from": "rag", "to": "answer", "label": "AI response", "variant": "emphasis", "labelAt": [921, 554] },
+    { "id": "show", "from": "answer", "to": "youtube", "label": "Seekable citations", "variant": "emphasis", "fromSide": "left", "toSide": "bottom", "route": "orthogonal-h", "via": [[620, 490], [620, 630], [123, 630]], "labelAt": [360, 616] }
+  ],
+  "cards": [
+    { "dot": "violet", "title": "Caption input", "items": ["Browser caption bridge first", "Cached server transcript provider as fallback"] },
+    { "dot": "cyan", "title": "Grounded output", "items": ["Pinecone searches only the active video", "Llama receives retrieved transcript context"] }
+  ]
+}

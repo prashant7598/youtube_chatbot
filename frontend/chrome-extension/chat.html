@@ -1,0 +1,22 @@
+<div id="shell">
+  <button id="launcher" type="button" aria-label="Open video chat" title="Ask about this video">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4.3A2.5 2.5 0 0 1 4 13.5z"/><path d="M8 8h8M8 11h5"/></svg>
+  </button>
+  <section id="panel" aria-label="Video transcript chat">
+    <header class="header" id="drag-handle" title="Drag to move the chat">
+      <div class="header-top">
+        <h2>Video chat</h2>
+        <span class="drag-indicator" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <button class="icon-button" id="clear" type="button" aria-label="Clear chat" title="Clear chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 6V4h6v2M8 10v7M12 10v7M16 10v7M5 6l1 15h12l1-15"/></svg></button>
+        <button class="icon-button" id="collapse" type="button" aria-label="Collapse chat" title="Collapse chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      </div>
+      <span id="video-meta">No YouTube video detected</span>
+    </header>
+    <div id="messages" aria-live="polite"></div>
+    <div id="loading" role="status"><span class="dots">Working</span></div>
+    <form id="composer">
+      <textarea id="question" rows="1" placeholder="Ask about this video" aria-label="Ask about this video"></textarea>
+      <button id="send" type="submit" aria-label="Send question" title="Send question"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></button>
+    </form>
+  </section>
+</div>

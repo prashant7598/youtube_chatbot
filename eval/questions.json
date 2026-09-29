@@ -1,0 +1,12 @@
+[
+  {
+    "id": "replace-me-1",
+    "video_id": "YOUR_VIDEO_ID",
+    "question": "What is the main idea explained in the video?"
+  },
+  {
+    "id": "replace-me-2",
+    "video_id": "YOUR_VIDEO_ID",
+    "question": "At what point does the speaker introduce the main example?"
+  }
+]

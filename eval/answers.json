@@ -1,0 +1,14 @@
+[
+  {
+    "id": "replace-me-1",
+    "reference_answer": "Replace with a human-reviewed answer grounded in the video.",
+    "retrieved_contexts": [],
+    "generated_answer": ""
+  },
+  {
+    "id": "replace-me-2",
+    "reference_answer": "Replace with a human-reviewed timestamp-grounded answer.",
+    "retrieved_contexts": [],
+    "generated_answer": ""
+  }
+]

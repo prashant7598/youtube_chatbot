@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Transcript Chat",
+  "version": "1.0.1",
+  "description": "Ask grounded questions about the currently playing YouTube video.",
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost:8000/*", "http://127.0.0.1:8000/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["chat.html", "chat.css", "page-bridge.js"],
+      "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*"]
+    }
+  ],
+  "options_page": "options.html"
+}
